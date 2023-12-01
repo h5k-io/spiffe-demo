@@ -116,7 +116,7 @@ istioctl verify-install -f istio.yaml
 
 ## cert-manager
 
-See <http://cert-manager.io>.
+See <https://cert-manager.io>.
 
 ```sh
 helm repo add jetstack https://charts.jetstack.io
