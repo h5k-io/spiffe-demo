@@ -112,6 +112,18 @@ istioctl dashboard prometheus
 
 # verify Istio installation
 istioctl verify-install -f istio.yaml
+
+# enforce mutual TLS for entire mesh
+cat <<EOD | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT
+EOD
 ```
 
 ## cert-manager

@@ -3,5 +3,4 @@ kind: Kustomization
 resources:
 - gateway.yaml
 - virtualservice.yaml
-- peerauthentication.yaml
 - certificate.yaml
