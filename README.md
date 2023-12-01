@@ -255,18 +255,36 @@ while true; do
     date
 done
 
-# get name of first hello-world pod by label selector
-hello_world_pod="$( kubectl get pod \
-  --selector app=hello-world,version=v1 \
-  --output jsonpath='{.items[0].metadata.name}'
-)"
-
 # check that the workload identity was issued by SPIRE
 # expected output:
 # X509v3 Subject Alternative Name: critical
 #   URI:spiffe://minikube.h5k.io/ns/hello-world/sa/hello-world
-istioctl proxy-config secret "${hello_world_pod}" --output json | \
-  jq --raw-output '.dynamicActiveSecrets[0].secret.tlsCertificate.certificateChain.inlineBytes' | \
+istioctl proxy-config secret "$( kubectl get pod \
+  --selector app=hello-world,version=v1 \
+  --output jsonpath='{.items[0].metadata.name}'
+)" --output json | \
+  jq '.dynamicActiveSecrets[0].secret.tlsCertificate.certificateChain' | \
+  jq --raw-output '.inlineBytes' | \
   base64 --decode | \
   openssl x509 -in /dev/stdin -noout -ext subjectAltName
+
+# create debug container, e.g. to run tcpdump
+kubectl debug "$( kubectl get pod \
+  --selector app=hello-world,version=v1 \
+  --output jsonpath='{.items[0].metadata.name}'
+)" \
+  --stdin \
+  --tty \
+  --image alpine \
+  --target hello-world
+
+# inside debug container, install tcpdump
+apk add --update tcpdump
+
+# in a shell pod, run curl
+while true; do curl hello-world; done
+
+# inside debug container, run tcpdump and filter for shell pod IP address
+# expected output: encrypted data, when mTLS enabled, cleartext otherwise
+tcpdump -vvvv -A '(dst POD_IP_ADDRESS)'
 ```
