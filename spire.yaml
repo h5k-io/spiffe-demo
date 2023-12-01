@@ -1,0 +1,16 @@
+global:
+  spire:
+    clusterName: minikube
+    trustDomain: minikube.h5k.io
+spire-agent:
+  socketPath: /run/secrets/workload-spiffe-uds/socket
+spire-server:
+  controllerManager:
+    identities:
+      clusterSPIFFEIDs:
+        default:
+          podSelector:
+            matchLabels:
+              spiffe.io/spire-managed-identity: "true"
+spiffe-csi-driver:
+  agentSocketPath: /run/secrets/workload-spiffe-uds/socket

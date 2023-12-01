@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hello-world-istio-ingressgateway-tls
+  namespace: istio-system
+spec:
+  secretName: hello-world-istio-ingressgateway-tls
+  dnsNames:
+  - hello-world.minikube.h5k.io
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer

@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: hello-world
+  namespace: hello-world
+spec:
+  hosts:
+  - hello-world.minikube.h5k.io
+  gateways:
+  - hello-world
+
+  # tls:
+  # - match:
+  #   - port: 443
+  #     sniHosts:
+  #     - hello-world.minikube.h5k.io
+  #   route:
+  #   - destination:
+  #       host: hello-world
+
+  http:
+  - route:
+    - destination:
+        host: hello-world
+    headers:
+      response:
+        add:
+          gateway: Istio

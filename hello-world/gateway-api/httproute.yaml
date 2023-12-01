@@ -1,0 +1,47 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hello-world-http
+spec:
+  parentRefs:
+  - name: hello-world
+    sectionName: http
+  hostnames:
+  - hello-world.minikube.h5k.io
+  rules:
+  - filters:
+    - type: RequestRedirect
+      requestRedirect:
+        scheme: https
+        statusCode: 301
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        add:
+        - name: gateway
+          value: Kubernetes Gateway API
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hello-world-https
+spec:
+  parentRefs:
+  - name: hello-world
+    sectionName: https
+  hostnames:
+  - hello-world.minikube.h5k.io
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    filters:
+    - type: ResponseHeaderModifier
+      responseHeaderModifier:
+        add:
+        - name: gateway
+          value: Kubernetes Gateway API
+    backendRefs:
+    - name: hello-world
+      port: 80

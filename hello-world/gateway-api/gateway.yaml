@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: hello-world
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
+spec:
+  gatewayClassName: istio
+  listeners:
+  - name: http
+    hostname: hello-world.minikube.h5k.io
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Same
+  - name: https
+    hostname: hello-world.minikube.h5k.io
+    port: 443
+    protocol: HTTPS
+    allowedRoutes:
+      namespaces:
+        from: Same
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: hello-world-gateway-api-tls
+        kind: Secret
+        group: ""

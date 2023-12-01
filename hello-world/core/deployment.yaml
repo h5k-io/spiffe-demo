@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: hello-world
+        version: v1
+        spiffe.io/spire-managed-identity: "true"
+    spec:
+      serviceAccountName: hello-world
+      containers:
+      - name: hello-world
+        image: stefanprodan/podinfo
+        ports:
+        - name: http
+          containerPort: 9898
+          protocol: TCP
+        resources:
+          requests:
+            memory: 100Mi
+            cpu: "0.1"
+          limits:
+            memory: 200Mi
+            cpu: "0.2"
